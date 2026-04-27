@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Code fetched successfully'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                bat 'docker build -t smartapp:v2 ./app'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                bat 'docker stop smartcontainer || exit 0'
+                bat 'docker rm smartcontainer || exit 0'
+                bat 'docker run -d -p 8081:80 --name smartcontainer smartapp:v2'
+            }
+        }
+
+        stage('Done') {
+            steps {
+                echo 'Deployment Completed'
+            }
+        }
+    }
+}
